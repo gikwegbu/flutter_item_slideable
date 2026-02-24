@@ -1,5 +1,5 @@
 
-## 0.0.2
+## 0.0.3
 
 ### Added
 - Added a comprehensive suite of unit/widget tests for the `Slideable` and `ActionItems` widgets covering render states, tap callbacks, assertions and size changing.

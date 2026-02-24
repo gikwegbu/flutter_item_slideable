@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:slideable/Slideable.dart';
+import 'package:slideable/slideable.dart';
 
 void main() {
   group('Slideable Widget Tests', () {
