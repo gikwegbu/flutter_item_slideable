@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 
 import 'size_change_notifier.dart';
 
-class ActionItems extends Object {
+/// Defines an action button revealed behind the [Slideable] widget when slid.
+class ActionItems {
+  /// Creates an [ActionItems] configuration.
   ActionItems({
     required this.icon,
     required this.onPress,
@@ -11,45 +13,67 @@ class ActionItems extends Object {
     this.radius,
   });
 
+  /// The icon or widget displayed for the action button.
   final Widget icon;
+
+  /// The callback invoked when the action button is tapped.
   final VoidCallback onPress;
+
+  /// The background color of the action button.
   final Color backgroudColor;
+
+  /// The border radius for styling the action button.
   final BorderRadius? radius;
 }
 
-// typedef IndexRetriever = void Function(int index);
-// typedef void IndexRetriever(int index);
-
+/// A widget that reveals underlying [ActionItems] when swiped horizontally.
 class Slideable extends StatefulWidget {
-  Slideable({
-    Key? key,
+  /// Creates a [Slideable] widget.
+  const Slideable({
+    super.key,
     required this.items,
     required this.child,
     this.backgroundColor = Colors.transparent,
     this.resetSlide = true,
     this.duration,
     this.curve,
-  }) : super(key: key) {
-    assert(items.length <= 6);
-  }
+  }) : assert(
+            items.length <= 6, 'A maximum of 6 action items can be provided.');
 
+  /// The list of action buttons (up to 6) revealed when sliding the item.
   final List<ActionItems> items;
+
+  /// The primary child widget displayed on top.
   final Widget child;
+
+  /// The background color of the slideable container.
   final Color backgroundColor;
+
+  /// Whether to automatically reset the slide position when rebuilt.
   final bool resetSlide;
+
+  /// The duration of the slide animation.
   final Duration? duration;
+
+  /// The animation curve applied during sliding.
   final Curve? curve;
 
   @override
-  State<StatefulWidget> createState() => _SlideableState();
+  State<Slideable> createState() => _SlideableState();
 }
 
 class _SlideableState extends State<Slideable> {
-  ScrollController controller = ScrollController();
+  final ScrollController controller = ScrollController();
 
   Size? childSize;
 
-  bool _handleScrollNotification(dynamic notification) {
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  bool _handleScrollNotification(ScrollNotification notification) {
     if (notification is ScrollEndNotification) {
       if (notification.metrics.pixels >= (widget.items.length * 70.0) / 2 &&
           notification.metrics.pixels < widget.items.length * 70.0) {
@@ -74,7 +98,7 @@ class _SlideableState extends State<Slideable> {
     return true;
   }
 
-  _resetSlideSize() {
+  void _resetSlideSize() {
     if (controller.hasClients) {
       controller.jumpTo(2.0);
     }
@@ -86,21 +110,23 @@ class _SlideableState extends State<Slideable> {
       _resetSlideSize();
     }
     if (childSize == null) {
-      return NotificationListener(
-        child: LayoutSizeChangeNotifier(
-          child: widget.child,
-        ),
+      return NotificationListener<LayoutSizeChangeNotification>(
         onNotification: (LayoutSizeChangeNotification notification) {
           childSize = notification.newSize;
           scheduleMicrotask(() {
-            setState(() {});
+            if (mounted) {
+              setState(() {});
+            }
           });
           return true;
         },
+        child: LayoutSizeChangeNotifier(
+          child: widget.child,
+        ),
       );
     }
 
-    List<Widget> above = <Widget>[
+    final List<Widget> above = <Widget>[
       // This is the to be seen widget by default
       Container(
         width: childSize?.width,
@@ -109,9 +135,9 @@ class _SlideableState extends State<Slideable> {
         child: widget.child,
       ),
     ];
-    List<Widget> under = <Widget>[];
+    final List<Widget> under = <Widget>[];
 
-    for (ActionItems item in widget.items) {
+    for (final ActionItems item in widget.items) {
       under.add(
         Container(
           alignment: Alignment.center,
@@ -127,22 +153,22 @@ class _SlideableState extends State<Slideable> {
 
       above.add(
         InkWell(
+          onTap: () {
+            // This controls the item to flip back...
+            controller.jumpTo(2.0);
+            item.onPress();
+          },
           child: Container(
             alignment: Alignment.center,
             width: 60.0,
             height: childSize?.height,
           ),
-          onTap: () {
-            // This controlls the item to flip back...
-            controller.jumpTo(2.0);
-            item.onPress();
-          },
         ),
       );
     }
 
     // Controls the action clickable items
-    Widget items = Container(
+    final Widget items = Container(
       width: childSize?.width,
       height: childSize?.height,
       color: widget.backgroundColor,
@@ -152,26 +178,22 @@ class _SlideableState extends State<Slideable> {
       ),
     );
 
-    // This controls how the swip occurs
-    Widget scrollview = NotificationListener(
+    // This controls how the swipe occurs
+    final Widget scrollview = NotificationListener<ScrollNotification>(
+      onNotification: _handleScrollNotification,
       child: ListView(
         controller: controller,
         scrollDirection: Axis.horizontal,
         children: above,
       ),
-      onNotification: _handleScrollNotification,
     );
 
     return Stack(
       children: <Widget>[
         items,
-        Positioned(
+        Positioned.fill(
           child: scrollview,
-          left: 0.0,
-          bottom: 0.0,
-          right: 0.0,
-          top: 0.0,
-        )
+        ),
       ],
     );
   }

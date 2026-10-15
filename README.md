@@ -26,7 +26,7 @@ dependencies:
 In your screen or page, add the below import, to expose the package:
 
 ```dart
-import 'package:slideable/Slideable.dart';
+import 'package:slideable/slideable.dart';
 ```
 
 ## Basic Usage

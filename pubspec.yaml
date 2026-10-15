@@ -1,6 +1,6 @@
 name: slideable
 description: Flexible and customizable slideable list item for Flutter apps. Add multiple action buttons, control animations, and automatically close open items with ease.
-version: 0.0.3
+version: 0.0.4
 homepage: https://github.com/gikwegbu/flutter_item_slideable
 repository: https://github.com/gikwegbu/flutter_item_slideable
 issue_tracker: https://github.com/gikwegbu/flutter_item_slideable/issues
@@ -25,8 +25,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^1.0.0
-
+  flutter_lints: ^5.0.0
 
 flutter:
-

@@ -4,9 +4,7 @@ import 'package:slideable/slideable.dart';
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({
-    Key? key,
-  }) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +17,7 @@ class MyApp extends StatelessWidget {
 }
 
 class Home extends StatefulWidget {
-  const Home({
-    Key? key,
-  }) : super(key: key);
+  const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -44,7 +40,7 @@ class _HomeState extends State<Home> {
           vertical: 20,
         ),
         itemBuilder: (context, index) {
-          Map<String, dynamic> _student = _classList[index];
+          final Map<String, dynamic> student = _classList[index];
           return GestureDetector(
             onLongPressDown: (val) {
               // This allows you the time taken for a user to slide upon the widget in the list.
@@ -56,9 +52,9 @@ class _HomeState extends State<Home> {
             },
             child: _listItem(
               context: context,
-              student: _student,
+              student: student,
               index: index,
-              resetSlide: index == resetSlideIndex ? false : true, 
+              resetSlide: index != resetSlideIndex,
               // Reverse engineering the notion, meaning the Slidable widget will close all slid item, except one with false, i.e the currently slide item
             ),
           );
@@ -166,7 +162,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  _deleteUser(user) {
+  void _deleteUser(String user) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text("$user, will be deleted."),
@@ -175,7 +171,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  _likeUser(user) {
+  void _likeUser(String user) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text("You gave $user a thumbs up, pretty cool 🥰"),

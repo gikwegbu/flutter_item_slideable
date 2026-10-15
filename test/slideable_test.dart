@@ -12,7 +12,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: Slideable(
-              items: <ActionItems>[],
+              items: const <ActionItems>[],
               child: const Text('Slideable Child Object'),
             ),
           ),

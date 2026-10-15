@@ -5,11 +5,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-typedef void SizeChangedCallBack(Size newSize);
+/// Signature for callbacks invoked when layout size changes.
+typedef SizeChangedCallBack = void Function(Size newSize);
 
+/// A notification dispatched when a widget's layout size changes.
 class LayoutSizeChangeNotification extends LayoutChangedNotification {
-  LayoutSizeChangeNotification(this.newSize) : super();
-  Size newSize;
+  /// Creates a [LayoutSizeChangeNotification] with the new layout [newSize].
+  LayoutSizeChangeNotification(this.newSize);
+
+  /// The newly determined size of the layout.
+  final Size newSize;
 }
 
 /// A widget that automatically dispatches a [SizeChangedLayoutNotification]
@@ -32,13 +37,12 @@ class LayoutSizeChangeNotification extends LayoutChangedNotification {
 ///  * [Notification], the base class for notifications that bubble through the
 ///    widget tree.
 class LayoutSizeChangeNotifier extends SingleChildRenderObjectWidget {
-  /// Creates a [SizeChangedLayoutNotifier] that dispatches layout changed
+  /// Creates a [LayoutSizeChangeNotifier] that dispatches layout changed
   /// notifications when [child] changes layout size.
-  const LayoutSizeChangeNotifier({Key? key, Widget? child})
-      : super(key: key, child: child);
+  const LayoutSizeChangeNotifier({super.key, super.child});
 
   @override
-  _SizeChangeRenderWithCallback createRenderObject(BuildContext context) {
+  RenderProxyBox createRenderObject(BuildContext context) {
     return _SizeChangeRenderWithCallback(onLayoutChangedCallback: (size) {
       LayoutSizeChangeNotification(size).dispatch(context);
     });
@@ -47,9 +51,8 @@ class LayoutSizeChangeNotifier extends SingleChildRenderObjectWidget {
 
 class _SizeChangeRenderWithCallback extends RenderProxyBox {
   _SizeChangeRenderWithCallback({
-    RenderBox? child,
     required this.onLayoutChangedCallback,
-  }) : super(child);
+  });
 
   // There's a 1:1 relationship between the _RenderSizeChangedWithCallback and
   // the `context` that is captured by the closure created by createRenderObject
